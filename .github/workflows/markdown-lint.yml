@@ -1,6 +1,9 @@
 name: Markdown Lint
 
 on:
+  # Allow manual runs from the Actions tab / gh so the workflow can be
+  # verified without a matching file change.
+  workflow_dispatch:
   push:
     branches: [master]
     paths:
