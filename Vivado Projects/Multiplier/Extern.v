@@ -56,14 +56,14 @@ module Extern(
         .Switch_out( DS_wire )
     );
     
-    Display(
+    Display u_display (
         .CLK_in( CD_wire ),
         .Data( DS_wire ? Result_wire : Switch ),
         .segment( Segment ),
         .position( Position )
     );
     
-    Multiply(
+    Multiply u_multiply (
         .CLK_in( CD_wire ),
         .Src1( Switch[15 : 8] ),
         .Src2( Switch[7 : 0] ),
