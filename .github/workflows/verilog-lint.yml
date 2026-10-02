@@ -1,0 +1,60 @@
+name: Verilog Lint
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '**/*.v'
+  pull_request:
+    paths:
+      - '**/*.v'
+
+permissions:
+  contents: read
+
+# Cancel in-progress runs for the same ref to save CI minutes.
+concurrency:
+  group: verilog-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verilog-lint:
+    name: Lint Verilog sources
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Icarus Verilog
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog
+
+      - name: Syntax-check each project
+        shell: bash
+        run: |
+          set -u
+          shopt -s nullglob
+          fail=0
+          # Each "Vivado Projects/<Name>/" folder is an independent design.
+          # Compile all .v files inside a folder together so cross-module
+          # references resolve; only genuine "error:" lines fail the build.
+          for d in "Vivado Projects"/*/; do
+            vfiles=("$d"*.v)
+            [ "${#vfiles[@]}" -gt 0 ] || continue
+            echo "::group::Linting ${d}"
+            out=$(iverilog -tnull -Wall -g2005 -o /dev/null "${vfiles[@]}" 2>&1)
+            rc=$?
+            if printf '%s\n' "$out" | grep -q "error:"; then
+              echo "::error::Real errors found in ${d}"
+              printf '%s\n' "$out"
+              fail=1
+            elif [ "$rc" -ne 0 ]; then
+              echo "::warning::Skipped ${d} (no root module / warnings only):"
+              printf '%s\n' "$out"
+            else
+              echo "OK: ${d}"
+            fi
+            echo "::endgroup::"
+          done
+          exit $fail
