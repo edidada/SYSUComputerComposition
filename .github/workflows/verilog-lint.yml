@@ -36,7 +36,11 @@ jobs:
       - name: Syntax-check each project
         shell: bash
         run: |
+          # The Actions runner invokes bash with -e (errexit). Turn it off so a
+          # non-zero exit from iverilog (e.g. a project with no root module)
+          # does not abort the script before our own pass/fail logic runs.
           set -u
+          set +e
           shopt -s nullglob
           fail=0
           # Each "Vivado Projects/<Name>/" folder is an independent design.
