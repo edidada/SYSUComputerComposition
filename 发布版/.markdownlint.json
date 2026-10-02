@@ -1,5 +1,10 @@
 {
-  "MD013": false, 
+  "MD013": false,
+  "MD018": false,
+  "MD022": false,
+  "MD034": false,
+  "MD041": false,
+  "MD056": false,
   "MD033": {
     "allowed_elements": ["image", "h2", "span", "thead", "td", "table", "tr", "th", "tbody", "iamge"]
   }
