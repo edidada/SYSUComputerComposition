@@ -1,0 +1,15 @@
+# WorkBuddy 本地工作笔记（含 memory/ 日志），不纳入版本控制
+.workbuddy/
+
+# Vivado 生成的临时/构建产物
+.Xil/
+*.jou
+*.str
+*.pb
+*.dcp
+*.bit
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+*.cache/
